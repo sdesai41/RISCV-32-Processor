@@ -129,7 +129,6 @@ always @(*) begin
 
 rf[0]=0;
 if (write) begin;
-	#50
 	rf[rd]=wdata;
 	end
 data1=rf[rs1];
@@ -390,41 +389,62 @@ endmodule
 module datapath(clk);
 
 //input [11:0] PC;
-reg [11:0] PCnew;
+reg [11:0] PCnew,PCout,PCout2;
 //input reg [7:0] im [0:4095];
-reg [31:0]instruction;
-reg signed [31:0] imm;
-reg [4:0] rs1,rs2,rd;
+reg [31:0]instruction,instrout;
+reg signed [31:0] imm,immout;
+reg [4:0] rs1,rs2,rd,rdout,rdo2,rdo3;
 reg[6:0] funct7;
 reg [2:0] funct3;
 reg signed [31:0] wdata;
-reg signed [31:0] data1,data2;
-wire pcsrc;
-wire signed [31:0] result,rdata;
+reg signed [31:0] data1,data1out,data2,data2out,data2out2;
+reg pcsrc;
+reg signed [31:0] rdata,result,resultout,resulto2,rdataout;
 wire zero,neg;
-reg[4:0] aluop;
-reg alusrc,memtoreg,regwrite,memread,memwrite,sign;//sign for loads if we r signextending
-reg [2:0] branch;
-reg [1:0] length;
-reg [11:0] PCresult;
+reg zeroout,negout;
+reg[4:0] aluop,aluopout;
+reg alusrc,alusrcout,memtoreg,memtoregout,memtorego2, memtorego3, regwrite,regwriteout,regwriteo2,regwriteo3,memread,memwrite,signout,signout2,memwriteout,memwriteout2,memreadout,memreadout2;//sign for loads if we r signextending
+reg [2:0] branch,branchout,branchout2;
+reg [1:0] length,lengthout,lengthout2;
+reg [11:0] PCresult,PCresultout;
 reg [11:0] PC4;
 input clk;
 
 initial begin 
 PCnew=0; 
+pcsrc=0;
 end
 
 add4 pcadd4(PCnew,clk, PC4);
+
 instructionmemory IM(PCnew, clk, instruction);
-decoder decode(instruction, rs1,rs2,rd, imm, funct7,funct3);
-registerfile rf(rs1,rs2,rd,regwrite, wdata,data1,data2);
-controller control(instruction, aluop,alusrc, memtoreg, regwrite,branch, memread,memwrite, length,sign );
-ALU aluex(aluop,sign,imm,data1,data2,alusrc,result,zero,neg);
-pcadder PCADD(PCnew, imm,clk, PCresult);
-datamemory mem(data2, result, memread,memwrite,length,rdata,sign);
-mux32 writeback(rdata, result,wdata, memtoreg);
-branchdecision branchchoice(branch,zero,neg,pcsrc);
-mux11 pcmux(PCresult,PC4,PCnew,pcsrc);
+
+fetchdecode reg1(clk, instruction, PCnew,instrout,PCout);
+
+decoder decode(instrout, rs1,rs2,rd, imm, funct7,funct3);
+
+registerfile rf(rs1,rs2,rdo3,regwriteo3, wdata,data1,data2);
+
+controller control(instrout, aluop,alusrc, memtoreg, regwrite,branch, memread,memwrite, length,sign );
+
+decodeex reg2(clk,PCout,imm,immout,data1,data2,rd,regwrite,sign,memtoreg,memwrite,memread,length, alusrc,branch,aluop,PCout2,data1out,data2out,rdout,regwriteout,signout,memtoregout,memreadout,lengthout, alusrcout,branchout,aluopout,memwriteout);
+
+
+ALU aluex(aluopout,signout,immout,data1out,data2out,alusrcout,result,zero,neg);
+
+pcadder PCADD(PCout2, immout,clk, PCresult);
+
+exmem reg3(clk,data2out,data2out2,result,resultout,zero,zeroout,neg,negout,rdout,rdo2,PCresult, PCresultout, memreadout,memreadout2,memwriteout,memwriteout2, lengthout, lengthout2, signout, signout2, regwriteout,regwriteo2, memtoregout,memtorego2,branchout,branchout2);
+
+datamemory mem(data2out2, resultout, memreadout2,memwriteout2,lengthout2,rdata,signout2);
+
+branchdecision branchchoice(branchout2,zeroout,negout,pcsrc);
+
+memwb reg4(clk,resultout,resulto2, rdata,rdataout,rdo3,rdo2,memtorego2, regwriteo2,memtorego3,regwriteo3);
+
+mux32 writeback(rdataout, resulto2,wdata, memtorego3);
+
+mux11 pcmux(PCresultout,PC4,PCnew,pcsrc);
 
 endmodule
 
@@ -466,7 +486,6 @@ assign unsubout=operand1-operand2;
 
 
 always @(*) begin 
-  #40
 	case(aluop)
 	
 	5'b00000:result=addout;
@@ -565,7 +584,7 @@ endmodule
 module branchdecision(branch,zero, neg,pcsrc);
 
 input [2:0] branch;
-input zero, neg;
+input reg zero, neg;
 output reg pcsrc;
 
 always @(*) begin
@@ -635,7 +654,7 @@ output reg  [11:0] pcresult;
 
 always @(posedge clk) begin
 #20
-pcresult<=PC+4;
+pcresult<=PC+imm;
 end
 
 endmodule
@@ -650,3 +669,107 @@ always @(posedge clk) begin
 PC4<=PC+4;
 end
 endmodule
+
+module fetchdecode(clk, instr, PC,instrout,PCout);
+input clk;
+input reg [11:0] PC;
+input reg [31:0] instr;
+output reg [11:0] PCout;
+output reg [31:0] instrout;
+always @ (posedge clk) begin
+PCout<=PC;
+instrout<=instr;
+end
+endmodule 
+
+module decodeex(clk,PC,imm,immout,data1,data2,rd,regwrite,sign,memtoreg,memwrite,memread,length, alusrc,branch,aluop,PCout,data1out,data2out,rdout,regwriteout,signout,memtoregout,memreadout,lengthout, alusrcout,branchout,aluopout,memwriteout);
+input clk;
+input reg regwrite,sign,memtoreg,memread,alusrc,memwrite;
+input reg [1:0] length;
+input reg [2:0] branch;
+input reg [4:0] aluop, rd;
+
+input reg [11:0] PC;
+input reg signed [31:0] data1,data2,imm;
+
+output reg regwriteout,signout,memtoregout,memreadout,alusrcout,memwriteout;
+output reg [1:0] lengthout;
+output reg [2:0] branchout;
+output reg [4:0] aluopout, rdout;
+
+output reg [11:0] PCout;
+output reg signed [31:0] data1out,data2out,immout;
+always @ (posedge clk) begin
+PCout<=PC;
+data1out<=data1;
+data2out<=data2;
+regwriteout<=regwrite;
+signout<=sign;
+memtoregout<=memtoreg;
+memwriteout<=memwrite;
+memreadout<=memread;
+alusrcout<=alusrc;
+branchout<=branch;
+lengthout<=length;
+aluopout<=aluop;
+rdout<=rd;
+immout<=imm;
+end
+endmodule
+
+module exmem(clk,data2,data2out,result,resultout,zero,zeroout,neg,negout,rd,rdout,PCresult, PCresultout, memread,memreadout,memwrite,memwriteout, length, lengthout, sign, signout, regwrite,regwriteout, memtoreg,memtoregout,branch,branchout);
+
+input clk;
+input reg regwrite,sign,memtoreg,memread,zero,memwrite,neg;
+input reg [1:0] length;
+input reg [2:0] branch;
+input reg [4:0] rd;
+
+input reg [11:0] PCresult;
+input reg signed [31:0] result,data2;
+
+output reg regwriteout,signout,memtoregout,memreadout,zeroout,negout,memwriteout;
+output reg [1:0] lengthout;
+output reg [2:0] branchout;
+output reg [4:0]  rdout;
+
+output reg [11:0] PCresultout;
+output reg signed [31:0] resultout,data2out;
+
+always @ (posedge clk) begin
+PCresultout<=PCresult;
+resultout<=result;
+data2out<=data2;
+regwriteout<=regwrite;
+signout<=sign;
+memtoregout<=memtoreg;
+memwriteout<=memwrite;
+memreadout<=memread;
+zeroout<=zero;
+negout<=neg;
+branchout<=branch;
+lengthout<=length;
+rdout<=rd;
+end
+endmodule
+
+module memwb(clk,result,resultout, rdata,rdataout,rdout,rd,memtoreg, regwrite,memtoregout,regwriteout);
+
+input clk;
+input reg regwrite,memtoreg;
+input reg [4:0] rd;
+input reg signed [31:0] rdata,result;
+
+output reg regwriteout,memtoregout;
+output reg [4:0]  rdout;
+
+output reg signed [31:0] rdataout,resultout;
+
+always @ (posedge clk) begin
+rdataout<=rdata;
+resultout<=result;
+regwriteout<=regwrite;
+memtoregout<=memtoreg;
+rdout<=rd;
+end
+endmodule 
