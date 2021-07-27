@@ -9,7 +9,7 @@ assign currin=0;
 datapath dp(clk);
 
 initial begin 
-clk=1;
+clk=0;
 end
 /*initial begin
 

@@ -78,14 +78,12 @@ end
 endmodule
 
 
-module pcadder(PC,imm,clk,pcresult);
-input clk;
+module pcadder(PC,imm,pcresult);
 input reg [11:0] PC;
 input reg signed [31:0] imm;
 output reg  [11:0] pcresult;
 
-always @(posedge clk) begin
-#20
+always @(*) begin
 pcresult<=PC+imm;
 end
 endmodule

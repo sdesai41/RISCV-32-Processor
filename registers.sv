@@ -1,12 +1,14 @@
-module fetchdecode(clk, instr, PC,instrout,PCout); //reg between fetch and decode stage
-input clk;
+module fetchdecode(clk, instr, PC,instrout,PCout,fdwrite); //reg between fetch and decode stage
+input clk, fdwrite;
 input reg [11:0] PC;
 input reg [31:0] instr;
 output reg [11:0] PCout;
 output reg [31:0] instrout;
 always @ (posedge clk) begin
+if (fdwrite) begin
 PCout<=PC;
 instrout<=instr;
+end
 end
 endmodule 
 
@@ -101,3 +103,16 @@ memtoregout<=memtoreg;
 rdout<=rd;
 end
 endmodule 
+
+module PCreg(PC,PCout,pcwrite);
+
+input reg [11:0] PC;
+output reg [11:0] PCout;
+input pcwrite;
+
+always @(*) begin
+if (pcwrite) begin
+PCout<=PC;
+end
+end
+endmodule

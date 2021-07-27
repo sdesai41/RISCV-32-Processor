@@ -45,7 +45,6 @@ im[44]=8'd179; im[44+1]= 8'd8; im[44+2]=8'd248; im[44+3]=8'd64;
 
 end
 always @(posedge clk) begin //reading data at clk pulse
-
 data_out={im[PCn+3],im[PCn+2],im[PCn+1],im[PCn]};
 end
 
@@ -57,7 +56,8 @@ input reg[11:0] PC;
 output reg [11:0] PC4;
 
 always @(posedge clk) begin
-#20
 PC4<=PC+4;
+
 end
+
 endmodule
