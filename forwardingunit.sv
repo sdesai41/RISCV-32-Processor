@@ -1,19 +1,19 @@
-module forwardingunit(rs1,rs2,rdexmem,rdmemwb,rwriteexmem, rwritememwb, forwardA,forwardB);
+module forwardingunit(rs1,rs2,rdexmem,rdmemwb,rwriteexmem, rwritememwb,memreadout,memwriteout,forwardA,forwardB,forwardC);
 
-input [4:0] rs1,rs2,rdexmem,rdmemwb;
-input rwriteexmem, rwritememwb;
-output reg [1:0] forwardA,forwardB;
+input reg [4:0] rs1,rs2,rdexmem,rdmemwb;
+input reg rwriteexmem, rwritememwb,memreadout,memwriteout;
+output reg [1:0] forwardA,forwardB,forwardC;
+
 
 always @ (*) begin
 
-if (rs1!=0 && rs2!=0) begin
+if (rs1!=0) begin
 
 if (rs1==rdexmem && rwriteexmem)  begin
-
 forwardA=2'b01;
 end
 
-else if (rs1==rdmemwb && rwritememwb) begin
+else if ((rs1==rdmemwb) && (rwritememwb)) begin
 
 forwardA=2'b10;
 
@@ -21,18 +21,38 @@ end
 else begin
 forwardA=2'b00;
 end
-if (rs2==rdexmem && rwriteexmem)  begin
+end
+else begin
+forwardA=2'b00;
+end
+if (rs2!=0) begin
 
+if ((rs2==rdexmem) && (rwriteexmem)&& ~(memreadout || memwriteout))  begin
 forwardB=2'b01;
 end
 
-else if (rs2==rdmemwb && rwritememwb) begin
-
+else if ((rs2==rdmemwb) && (rwritememwb)  && ~(memreadout|| memwriteout)) begin
 forwardB=2'b10;
 end 
+
 else begin
 forwardB=2'b00;
 end
+if ((rs2==rdexmem) && (rwriteexmem)&& (memreadout||memwriteout))  begin
+forwardC=2'b01;
+end
+
+else if ((rs2==rdmemwb) && (rwritememwb) && (memreadout || memwriteout)) begin
+forwardC=2'b10;
+end 
+
+else begin
+forwardC=2'b00;
+end
+end
+else begin
+forwardB=2'b00;
+forwardC=2'b00;
 end
 end
 endmodule
