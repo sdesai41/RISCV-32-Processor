@@ -72,7 +72,7 @@ clk=1;
 end
 */
 always begin
-#500 clk=~clk;
+#250 clk=~clk;
 end
 
 endmodule 

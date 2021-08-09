@@ -23,7 +23,7 @@ always @ (*) begin
 		end
 	endcase
 	end 
-	if (memread) begin
+	else if (memread) begin
 		case(length)
 		2'b00: begin
 		rdata[7:0]=dm[address];

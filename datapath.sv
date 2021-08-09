@@ -5,7 +5,7 @@ module datapath(clk);
 reg [11:0] PCnew,PCout,PCout2,PCim;
 reg [11:0] PCresult,PCresultout;
 reg [31:0]instruction,instrout;
-reg signed [31:0] imm,immout;
+reg signed [31:0] imm,immout; 
 reg [4:0] rs1,rs2,rd,rdout,rdo2,rdo3,rs1out,rs2out;
 reg [31:0] op2;
 reg[6:0] funct7;
@@ -31,14 +31,14 @@ reg [1:0] forwardA,forwardB,forwardC;
 initial begin 
 PCnew=0; 
 pcsrc=0;
-ctrlf=0;
 pcwrite=1;
 fdwrite=1;
+ctrlf=0;
 end
 
-add4 pcadd4(PCim,clk, PC4);
+add4 pcadd4(PCim, PC4);
 
-instructionmemory IM(PCim, clk, instruction);
+instructionmemory IM(PCim, instruction);
 
 fetchdecode reg1(clk, instruction, PCim,instrout,PCout, fdwrite);
 
@@ -80,7 +80,7 @@ forwardingunit FU(rs1out,rs2out,rdo2,rdo3,regwriteo2,regwriteo3,memreadout,memwr
 
 hazard_detection HD(memreadout, rs1,rs2,rdout, ctrlf,pcwrite,fdwrite);
 
-PCreg regpc(PCnew,PCim,pcwrite);
+PCreg regpc(PCnew,PCim,clk,pcwrite);
 
 
 

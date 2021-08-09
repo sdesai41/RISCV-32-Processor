@@ -1,7 +1,7 @@
-module instructionmemory(PCn,clk,data_out);
+module instructionmemory(PCn,data_out);
 
 reg [7:0] im [0:4095];
-input clk;
+
 input reg [11:0] PCn;
 output reg [31:0] data_out;
 
@@ -78,18 +78,18 @@ im[40]=8'd51; im[40+1]= 8'd136; im[40+2]=8'd198; im[40+3]=8'd64;
 im[44]=8'd179; im[44+1]= 8'd8; im[44+2]=8'd248; im[44+3]=8'd64;
 
 end
-always @(posedge clk) begin //reading data at clk pulse
-data_out={im[PCn+3],im[PCn+2],im[PCn+1],im[PCn]};
+always begin //reading data at clk pulse
+data_out=#5 {im[PCn+3],im[PCn+2],im[PCn+1],im[PCn]};
 end
 
 endmodule 
 
-module add4(PC,clk, PC4); //incrementing PC with clk pulse
-input clk;
+module add4(PC,PC4); //incrementing PC with clk pulse
+
 input reg[11:0] PC;
 output reg [11:0] PC4;
 
-always @(posedge clk) begin
+always begin
 PC4<=PC+4;
 
 end
