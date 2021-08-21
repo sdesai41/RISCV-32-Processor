@@ -17,7 +17,6 @@ always @ (instruction) begin
 						memread=0;
 						memtoreg=0;
 						length=2'b00;
-						
 						if (instruction[14:12]==3'b000 && instruction[31:25]==7'b0000000) begin//add
 							aluop=5'b00000;
 							sign=1;

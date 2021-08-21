@@ -65,17 +65,16 @@ input [4:0] rs2,rs1,rd;
 output reg ctrlf,pcwrite,fdwrite;
 
 always @(*) begin
-if(memread && (rs1==rd || rs2==rd)) begin
-
-ctrlf=1;
-pcwrite=0;
-fdwrite=0;
-
-end
-else begin
-ctrlf=0;
-pcwrite=1;
-fdwrite=1;
-end
+#5
+	if(memread && (rs1==rd || rs2==rd)) begin
+		ctrlf=1;
+		pcwrite=0;
+		fdwrite=0;
+	end
+	else begin
+		ctrlf=0;
+		pcwrite=1;
+		fdwrite=1;
+	end
 end
 endmodule

@@ -53,7 +53,7 @@ output reg alusrcout,memtoregout,regwriteout,memreadout,memwriteout, signout;//s
 output reg [2:0] branchout; // for branch type
 output reg [1:0] lengthout; // for loads and stores
 
-always @(ctrlf) begin
+always @ (*) begin
 if (ctrlf) begin
 aluopout<=0;
 alusrcout<=0;
@@ -75,7 +75,6 @@ memwriteout<=memwrite;
 signout<=sign;
 branchout<=branch;
 lengthout<=length;
-
 end
 end
 endmodule

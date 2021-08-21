@@ -1,48 +1,46 @@
 
 module datapath(clk);
 
-
-reg [11:0] PCnew,PCout,PCout2,PCim;
+input clk;
+reg [11:0] PCnew,PCout,PCout2,PCim,PC4;
 reg [11:0] PCresult,PCresultout;
 reg [31:0]instruction,instrout;
-reg signed [31:0] imm,immout; 
+reg signed [31:0] imm,immout;
 reg [4:0] rs1,rs2,rd,rdout,rdo2,rdo3,rs1out,rs2out;
 reg [31:0] op2;
-reg[6:0] funct7;
-reg [2:0] funct3;
 reg signed [31:0] wdata;
 reg signed [31:0] data1,data1out,data2,data2out,data2out2;
 reg signed [31:0] op1fin,op2fin,data2fin;
 reg pcsrc;
-reg signed [31:0] rdata,result,resultout,resulto2,rdataout;
-wire zero,neg;
+reg signed [31:0] result,resultout,resulto2,rdata, rdataout;
+reg zero,neg;
 reg zeroout,negout;
 reg[4:0] aluop,aluopout,aluopu;
-reg alusrc,alusrcout,alusrcu,memtoreg,memtoregu,memtoregout,memtorego2, memtorego3, regwrite,regwriteu,regwriteout,regwriteo2,regwriteo3,memreadu,memread,memwrite,memwriteu,signu,signout,signout2,memwriteout,memwriteout2,memreadout,memreadout2;//sign for loads if we r signextending
+reg alusrc,alusrcout,alusrcu,memtoreg,memtoregu,memtoregout,memtorego2, memtorego3, regwrite,regwriteu,regwriteout,regwriteo2,regwriteo3,memreadu,memread,memwrite,memwriteu,sign,signu,signout,signout2,memwriteout,memwriteout2,memreadout,memreadout2;//sign for loads if we r signextending
 reg [2:0] branch,branchout,branchout2,branchu;
 reg [1:0] length,lengthout,lengthout2,lengthu;
-
-reg [11:0] PC4;
-input clk;
 reg ctrlf,pcwrite,fdwrite;
 reg [1:0] forwardA,forwardB,forwardC;
 
 
 initial begin 
-PCnew=0; 
+PCim=0; 
 pcsrc=0;
 pcwrite=1;
 fdwrite=1;
 ctrlf=0;
+forwardA=0;
+forwardB=0;
+forwardC=0;
 end
 
-add4 pcadd4(PCim, PC4);
+add4 pcadd4(PCim,PC4);
 
-instructionmemory IM(PCim, instruction);
+instructionmemory IM(PCim,clk,instruction);
 
-fetchdecode reg1(clk, instruction, PCim,instrout,PCout, fdwrite);
+fetchdecode reg1(clk,instruction, PCim,instrout,PCout, fdwrite);
 
-decoder decode(instrout, rs1,rs2,rd, imm, funct7,funct3);
+decoder decode(instrout, rs1,rs2,rd, imm);
 
 registerfile rf(rs1,rs2,rdo3,regwriteo3, wdata,data1,data2);
 
@@ -80,7 +78,7 @@ forwardingunit FU(rs1out,rs2out,rdo2,rdo3,regwriteo2,regwriteo3,memreadout,memwr
 
 hazard_detection HD(memreadout, rs1,rs2,rdout, ctrlf,pcwrite,fdwrite);
 
-PCreg regpc(PCnew,PCim,clk,pcwrite);
+PCreg regpc(PCnew,clk,PCim,pcwrite);
 
 
 

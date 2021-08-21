@@ -6,9 +6,12 @@ output reg [11:0] PCout;
 output reg [31:0] instrout;
 always @ (posedge clk) begin
 if (fdwrite) begin
+//PCout<=PC;
+//instrout<=instr;
 
 PCout<= #5 PC;
-instrout<=#5 instr;
+instrout<= #5 instr;
+
 end
 end
 endmodule 
@@ -32,9 +35,28 @@ output reg [4:0] aluopout,rdout,rs1out,rs2out;
 output reg [11:0] PCout;
 output reg signed [31:0] data1out,data2out,immout;
 always @ (posedge clk) begin
+/*
+PCout<=PC;
+data1out<=data1;
+data2out<=data2;
+regwriteout<=regwrite;
+signout<=sign;
+memtoregout<=memtoreg;
+memwriteout<=memwrite;
+memreadout<=memread;
+alusrcout<=alusrc;
+branchout<=branch;
+lengthout<=length;
+aluopout<=aluop;
+rdout<=rd;
+immout<=imm;
+rs2out<=rs2;
+rs1out<=rs1;
+*/
+
 PCout<= #5 PC;
 data1out<= #5 data1;
-data2out<=#5 data2;
+data2out<= #5 data2;
 regwriteout<= #5 regwrite;
 signout<= #5 sign;
 memtoregout<= #5 memtoreg;
@@ -48,6 +70,7 @@ rdout<= #5 rd;
 immout<=#5 imm;
 rs2out<=#5 rs2;
 rs1out<= #5 rs1;
+
 end
 endmodule
 
@@ -71,6 +94,22 @@ output reg [11:0] PCresultout;
 output reg signed [31:0] resultout,data2out;
 
 always @ (posedge clk) begin
+/*
+PCresultout<=PCresult;
+resultout<=result;
+data2out<=data2;
+regwriteout<=regwrite;
+signout<=sign;
+memtoregout<=memtoreg;
+memwriteout<=memwrite;
+memreadout<=memread;
+zeroout<=zero;
+negout<=neg;
+branchout<=branch;
+lengthout<=length;
+rdout<=rd;
+*/
+
 PCresultout<=#5 PCresult;
 resultout<= #5 result;
 data2out<=#5 data2;
@@ -84,6 +123,7 @@ negout<=#5 neg;
 branchout<=#5 branch;
 lengthout<=#5 length;
 rdout<=#5 rd;
+
 end
 endmodule
 
@@ -99,22 +139,32 @@ output reg [4:0]  rdout;
 output reg signed [31:0] rdataout,resultout;
 
 always @ (posedge clk) begin
+/*
+rdataout<= rdata;
+resultout<= result;
+regwriteout<= regwrite;
+memtoregout<=memtoreg;
+rdout<=rd;
+*/
+
 rdataout<=#5 rdata;
 resultout<=#5 result;
 regwriteout<=#5 regwrite;
 memtoregout<=#5 memtoreg;
-rdout<=rd;
+rdout<=#5 rd;
+
 end
 endmodule 
 
-module PCreg(PC,PCout,clk,pcwrite);
+module PCreg(PC,clk,PCout,pcwrite);
 
 input reg [11:0] PC;
 output reg [11:0] PCout;
-input pcwrite,clk;
+input pcwrite, clk;
 
 always @(posedge clk) begin
 if (pcwrite) begin
+//PCout<=PC;
 PCout<=#5 PC;
 end
 end

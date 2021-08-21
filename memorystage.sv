@@ -21,9 +21,15 @@ always @ (*) begin
 		dm[address]=wdata[7:0];
 		dm[address+1]=wdata[15:8];
 		end
+		default:begin
+		dm[address]=wdata[7:0];
+		dm[address+1]=wdata[15:8];
+		dm[address+2]=wdata[23:16];
+		dm[address+3]=wdata[31:24];
+		end
 	endcase
 	end 
-	else if (memread) begin
+	if (memread) begin
 		case(length)
 		2'b00: begin
 		rdata[7:0]=dm[address];
@@ -47,6 +53,12 @@ always @ (*) begin
 		rdata={{16{1'b0}},dm[address+1],dm[address]};
 		end
 	end	
+	default: begin
+		rdata[7:0]=dm[address];
+		rdata[15:8]=dm[address+1];
+		rdata[23:16]=dm[address+2];
+		rdata[31:24]=dm[address+3];
+		end
 	endcase
 end	
 end

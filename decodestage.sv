@@ -1,18 +1,15 @@
-module decoder(instruction,rs1,rs2,rd,imm,  funct7,funct3);
+module decoder(instruction,rs1,rs2,rd,imm);
 
 input reg [31:0] instruction;
 output reg signed [31:0] imm;
 output [4:0] rs1,rs2,rd;
-output[6:0] funct7;
-output [2:0] funct3;
 wire [6:0] opcode;
 
 assign opcode=instruction[6:0];
 assign rd= instruction[11:7];
 assign rs1= instruction[19:15];
 assign rs2= instruction[24:20];
-assign funct7=instruction[31:25];
-assign funct3= instruction[14:12];
+
 
 
 always @ (instruction) begin
@@ -26,7 +23,7 @@ always @ (instruction) begin
 		7'b0000011: imm={{21{instruction[31]}}, instruction[30:20]};
 		7'b1100011: imm= {{20{instruction[31]}}, instruction[7], instruction[30:25], instruction[11:8], 1'b0};
 		7'b0100011: imm={{21{instruction[31]}}, instruction[30:25], instruction[11:8], instruction[7]};
-	default: imm={{21{instruction[31]}}, instruction[30:20]};
+		default: imm={{21{instruction[31]}}, instruction[30:20]};
 endcase
 
 end

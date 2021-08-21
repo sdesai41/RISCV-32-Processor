@@ -1,4 +1,4 @@
-module ALU(aluop, sign,data1,op2,result, zero, neg);
+module ALU(aluop,sign,data1,op2,result, zero, neg);
 
 input reg signed [31:0] data1;
 input reg signed [31:0] op2;
@@ -12,12 +12,7 @@ output reg [31:0] result;
 wire [31:0] operand1, operand2;
 wire signed [31:0] addout,sllout,srlout,sraout,subout,andout,orout,xorout,unsubout;
 
-assign zero = (result==0) ? 1'b1 : 1'b0;
-assign neg = (result<0) ? 1'b1 : 1'b0;
 
-
-
- // operand 2 based on alusrc
 
 assign operand1=data1; //unsigned versions
 assign operand2=op2; // unsigned versions
@@ -34,10 +29,12 @@ assign orout= data1|op2;
 assign xorout= data1^op2;
 assign unsubout=operand1-operand2;
 
+assign zero = (result==0) ? 1'b1 : 1'b0;
+assign neg = (result<0) ? 1'b1 : 1'b0;
 
-always @(*) begin 
+always @(aluop) begin 
+
 	case(aluop)
-	
 	5'b00000:result=addout;
 	5'b00001:begin
 			if (!sign) begin
@@ -57,7 +54,7 @@ always @(*) begin
 		if (!sign) begin
 			if (unsubout<0) begin
 				result=32'd1;
-				end
+			end
 			else begin
 				result=0;
 			end
@@ -65,14 +62,15 @@ always @(*) begin
 		else begin
 			if (subout<0) begin
 				result=32'd1;
-				end
+			end
 			else begin
 				result=0;
 			end
 		end
 	end
-	5'b01001:result=op2;
-	default: result=0;
+	5'b01001:begin 
+					result=op2;
+				end
 	endcase
 end
 endmodule
@@ -81,9 +79,7 @@ endmodule
 module pcadder(PC,imm,pcresult);
 input reg [11:0] PC;
 input reg signed [31:0] imm;
-output reg  [11:0] pcresult;
+output  [11:0] pcresult;
 
-always @(*) begin
-pcresult<=PC+imm;
-end
+assign pcresult=PC+imm;
 endmodule

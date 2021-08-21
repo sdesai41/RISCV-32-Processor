@@ -11,7 +11,10 @@ datapath dp(clk);
 initial begin 
 clk=0;
 end
+
+
 /*initial begin
+Warning (10235): Verilog HDL Always Construct warning at decodestage.sv(20): variable "opcode" is read inside the Always Construct but isn't in the Always Construct's Event Control
 
 //PC=0;
 im[0]=8'd19; 
@@ -72,7 +75,7 @@ clk=1;
 end
 */
 always begin
-#250 clk=~clk;
+#500 clk=~clk;
 end
 
 endmodule 
