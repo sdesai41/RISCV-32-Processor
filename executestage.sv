@@ -32,7 +32,7 @@ assign unsubout=operand1-operand2;
 assign zero = (result==0) ? 1'b1 : 1'b0;
 assign neg = (result<0) ? 1'b1 : 1'b0;
 
-always @(aluop) begin 
+always @(*) begin 
 
 	case(aluop)
 	5'b00000:result=addout;

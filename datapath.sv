@@ -36,11 +36,11 @@ end
 
 add4 pcadd4(PCim,PC4);
 
-instructionmemory IM(PCim,clk,instruction);
+instructionmemory IM(PCim,instruction);
 
 fetchdecode reg1(clk,instruction, PCim,instrout,PCout, fdwrite);
 
-decoder decode(instrout, rs1,rs2,rd, imm);
+decoder decode(instrout, rs1,rs2,rd,imm);
 
 registerfile rf(rs1,rs2,rdo3,regwriteo3, wdata,data1,data2);
 
