@@ -51,3 +51,74 @@ rf[0]=0;
 end
 
 endmodule
+
+module comparator(data1, data2, branch, outcome);
+
+input signed [31:0] data1,data2;
+input branch;
+output reg outcome;
+wire [32:0] data1u, data2u;
+
+assign data1u = {1'b0, data1};
+assign data2u= {1'b0, data2};
+
+always @(*) begin
+
+case(branch)
+3'b000: outcome=0;
+3'b001: begin
+	if (data1-data2==0) begin
+		outcome=1;
+	end
+	else begin
+		outcome=0;
+	end
+end
+3'b010: begin
+	if (data1-data2==0) begin
+		outcome=0;
+	end
+	else begin
+		outcome=1;
+	end
+end
+3'b011: begin
+	if (data1<data2) begin
+		outcome=1;
+	end
+	else begin
+		outcome=0;
+	end
+end
+3'b100: begin
+	if (data1>data2) begin
+		outcome=1;
+	end
+	else begin
+		outcome=0;
+	end
+end
+3'b101: begin
+	if (data1u<data2u) begin
+		outcome=1;
+	end
+	else begin
+		outcome=0;
+	end
+end
+3'b110: begin
+	if (data1u>data2u) begin
+		outcome=1;
+	end
+	else begin
+		outcome=0;
+	end
+end
+3'b111:outcome=1;
+endcase
+end
+endmodule
+
+
+
+
