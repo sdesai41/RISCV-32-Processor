@@ -16,13 +16,25 @@ output [31:0] out;
 assign out= sel ? in1: in2;
 endmodule 
 
-module mux11(in1,in2,out,sel); //11 bit input mux
+module mux11(in1,in2,in3,in4,out,sel,flushpos,flushneg); //11 bit input mux
 
-input [11:0] in1,in2;
-input sel;
-output [11:0] out;
+input [11:0] in1,in2,in3,in4;
+input sel,flushpos,flushneg;
+output reg [11:0] out;
 
-assign out= sel ? in1: in2;
+
+//assign out= sel ? in1: in2;
+always @(*) begin
+if (flushpos) begin
+out=in3;
+end 
+else if (flushneg) begin
+out=in4;
+end
+else begin
+out=sel? in1:in2;
+end
+end
 
 endmodule
 

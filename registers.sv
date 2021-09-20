@@ -9,7 +9,7 @@ always @ (posedge clk) begin
 if (fdwrite && !flush) begin
 PCout<=PC;
 instrout<=instr;
-pcsrcout<=pcsrcout;
+pcsrcout<=pcsrc;
 end
 if (flush) begin
 instrout<= 32'd0;
@@ -22,10 +22,10 @@ end
 end
 endmodule 
 
-module decodeex(clk,rs1,rs1out,rs2,rs2out, PC,imm,immout,data1,data2,rd,regwrite,sign,memtoreg,memwrite,memread,length, alusrc,branch,aluop,PCout,data1out,data2out,rdout,regwriteout,signout,memtoregout,memreadout,lengthout, alusrcout,branchout,aluopout,memwriteout);
+module decodeex(clk,rs1,rs1out,rs2,rs2out, PC,imm,immout,data1,data2,rd,regwrite,sign,memtoreg,memwrite,memread,length, alusrc,branch,aluop,PCout,data1out,data2out,rdout,regwriteout,signout,memtoregout,memreadout,lengthout, alusrcout,branchout,aluopout,memwriteout,br,brout);
 
 input clk;
-input reg regwrite,sign,memtoreg,memread,alusrc,memwrite;
+input reg regwrite,sign,memtoreg,memread,alusrc,memwrite,br;
 input reg [1:0] length;
 input reg [2:0] branch;
 input reg [4:0] aluop,rd, rs1,rs2;
@@ -33,7 +33,7 @@ input reg [4:0] aluop,rd, rs1,rs2;
 input reg [11:0] PC;
 input reg signed [31:0] data1,data2,imm;
 
-output reg regwriteout,signout,memtoregout,memreadout,alusrcout,memwriteout;
+output reg regwriteout,signout,memtoregout,memreadout,alusrcout,memwriteout,brout;
 output reg [1:0] lengthout;
 output reg [2:0] branchout;
 output reg [4:0] aluopout,rdout,rs1out,rs2out;
@@ -58,6 +58,7 @@ rdout<=rd;
 immout<=imm;
 rs2out<=rs2;
 rs1out<=rs1;
+brout<=br;
 
 //
 //PCout<= #5 PC;
@@ -133,16 +134,17 @@ rdout<=rd;
 end
 endmodule
 
-module memwb(clk,result,resultout, rdata,rdataout,rdout,rd,memtoreg, regwrite,memtoregout,regwriteout);
-input clk;
-input reg regwrite,memtoreg;
-input reg [4:0] rd;
-input reg signed [31:0] rdata,result;
+module memwb(clk,result,resultout, rdata,rdataout,rdout,rd,memtoreg, regwrite,memtoregout,regwriteout,cachehit,cachehitout,data2out2,data2out3);
 
-output reg regwriteout,memtoregout;
+input clk;
+input reg regwrite,memtoreg,cachehit;
+input reg [4:0] rd;
+input reg signed [31:0] rdata,result,data2out2;
+
+output reg regwriteout,memtoregout,cachehitout;
 output reg [4:0]  rdout;
 
-output reg signed [31:0] rdataout,resultout;
+output reg signed [31:0] rdataout,resultout,data2out3;
 
 always @ (posedge clk) begin
 
@@ -151,6 +153,8 @@ resultout<= result;
 regwriteout<= regwrite;
 memtoregout<=memtoreg;
 rdout<=rd;
+cachehitout<=cachehit;
+data2out3<=data2out2;
 
 
 //rdataout<=#5 rdata;

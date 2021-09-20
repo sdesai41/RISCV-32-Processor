@@ -58,20 +58,28 @@ end
 endmodule
 
 
-module hazard_detection(pcsrc,branchreal, memread,rwriteidex,memreadexmem,branch,branchout, rs1,rs2,rd,rdexmem, ctrlf,pcwrite,fdwrite,ifflush);
+module hazard_detection(pcsrc,branchreal, memread,rwriteidex,memreadexmem,branch,branchout, rs1,rs2,rd,rdexmem, ctrlf,pcwrite,fdwrite,ifflush,flushneg,flushpos);
 
 input reg memread,rwriteidex,memreadexmem, pcsrc,branchreal;
 input reg [2:0] branch,branchout;
 input [4:0] rs2,rs1,rd,rdexmem;
-output reg ctrlf,pcwrite,fdwrite,ifflush;
+output reg ctrlf,pcwrite,fdwrite,flushpos,flushneg;
+output  ifflush;
 
+assign ifflush = flushpos|flushneg;
 always @(*) begin
 #5
-	if (pcsrc!=branchreal) begin
-	ifflush=1;
+	if (pcsrc!=branchreal && branchreal==0) begin
+	flushneg=1;
+	flushpos=0;
 	end
-	else begin
-	ifflush=0;
+	else if (pcsrc!=branchreal && branchreal==1)  begin
+	flushneg=0;
+	flushpos=1;
+	end
+	else begin 
+	flushneg=0;
+	flushpos=0;
 	end
 	if(memread && (rs1==rd || rs2==rd)) begin
 		ctrlf=1;

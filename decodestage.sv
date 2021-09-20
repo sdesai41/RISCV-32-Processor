@@ -55,7 +55,7 @@ endmodule
 module comparator(data1, data2, branch, outcome);
 
 input signed [31:0] data1,data2;
-input branch;
+input [2:0] branch;
 output reg outcome;
 wire [32:0] data1u, data2u;
 
