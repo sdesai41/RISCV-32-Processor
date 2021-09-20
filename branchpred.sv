@@ -17,23 +17,23 @@ end
 always @(posedge clk) begin
 	#5
 	$display("state @ %h=%b",PCpred,state[PCpred]);
-	case(state[PCpred])
+	case(state[PCpred]) //output branch prediction 0 no 1 yes
 	2'b00: out=0;
 	2'b01: out=0;
 	2'b10: out=1;
 	2'b11: out=1;
 	endcase
-if (!(!branch)) begin
+if (!(!branch)) begin // if we are branching update state based on outcome
 	if (outcome) begin
 		$display("Pos outcome @ %h",PCupdate);
-		case (state[PCupdate])
+		case (state[PCupdate]) //increment if we branch
 			2'b11: state[PCupdate]<=state[PCupdate];
 			default: state[PCupdate]<=state[PCupdate]+1;
 		endcase
 	end
 	else if (!outcome) begin
 		$display("neg outcome @ %h",PCupdate);
-		case (state[PCupdate])
+		case (state[PCupdate]) //decrement if we dont branch
 			2'b00: state[PCupdate]<=state[PCupdate];
 			default: state[PCupdate]<=state[PCupdate]-1;
 		endcase
@@ -57,16 +57,16 @@ output reg [PCSIZE-1:0] addrout;
 
 always @ (posedge clk) begin
 #5
-		for (i=0; i<BTBSIZE; i=i+1) begin
+		for (i=0; i<BTBSIZE; i=i+1) begin //search if addr is in BTB
 			if (BTB[i][2*PCSIZE-1:PCSIZE]==PC) begin
-				addrout=BTB[i][PCSIZE-1:0];
+				addrout=BTB[i][PCSIZE-1:0]; //set addrout to target
 				break;
 			end
 		end
-	if (!(!branch)) begin 	
-		if (count<BTBSIZE) begin
-			BTB[count][2*PCSIZE-1:PCSIZE]=PCupdate;
-			BTB[count][PCSIZE-1:0]=target;
+	if (!(!branch)) begin 	//update BTB on branches
+		if (count<BTBSIZE) begin 
+			BTB[count][2*PCSIZE-1:PCSIZE]=PCupdate; //store address
+			BTB[count][PCSIZE-1:0]=target; //store target addy
 			count=count+1;
 		end
 		else if (count==BTBSIZE) begin

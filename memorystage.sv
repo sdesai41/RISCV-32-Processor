@@ -9,8 +9,8 @@ reg [7:0] dm [0:4095];
 
 always @ (posedge cache) begin // once cache is done
 	
-	if (memwrite) begin
-		case(length)
+	if (memwrite) begin //write on memwrites
+		case(length)// length varibale determines length of what we storing
 		2'b00: begin
 		dm[address]=wdata[7:0];
 		dm[address+1]=wdata[15:8];
@@ -30,9 +30,9 @@ always @ (posedge cache) begin // once cache is done
 		end
 	endcase
 	end 
-	else if (memread) begin
-		if (!cachehit) begin
-			case(length)
+	else if (memread) begin //loading from memory
+		if (!cachehit) begin // if cache doesnt hit
+			case(length) //set read data based on length and sign varibales
 			2'b00: begin
 			rdata[7:0]=dm[address];
 			rdata[15:8]=dm[address+1];

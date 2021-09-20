@@ -52,19 +52,19 @@ end
 
 endmodule
 
-module comparator(data1, data2, branch, outcome);
+module comparator(data1, data2, branch, outcome); //branch compare
 
 input signed [31:0] data1,data2;
 input [2:0] branch;
 output reg outcome;
 wire [32:0] data1u, data2u;
 
-assign data1u = {1'b0, data1};
+assign data1u = {1'b0, data1}; //unsigned data
 assign data2u= {1'b0, data2};
 
 always @(*) begin
 
-case(branch)
+case(branch) //deciding whether to branch
 3'b000: outcome=0;
 3'b001: begin
 	if (data1-data2==0) begin

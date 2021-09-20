@@ -25,20 +25,20 @@ output reg [11:0] out;
 
 //assign out= sel ? in1: in2;
 always @(*) begin
-if (flushpos) begin
-out=in3;
+if (flushpos) begin // if we mispredict a branch
+out=in3; 
 end 
-else if (flushneg) begin
+else if (flushneg) begin // if we mispredict a non branch
 out=in4;
 end
-else begin
+else begin // choosing regularly
 out=sel? in1:in2;
 end
 end
 
 endmodule
 
-module threemux32(data1,data2,data3,out,sel);
+module threemux32(data1,data2,data3,out,sel); // three input mux
 
 input reg [31:0] data1,data2,data3;
 input [1:0] sel; 
@@ -55,7 +55,7 @@ always @(*) begin
 endmodule
 
 module controllermux(ctrlf,aluop,alusrc, memtoreg, regwrite,branch,memread,memwrite,length,sign,aluopout,alusrcout, memtoregout, regwriteout,branchout,memreadout,memwriteout,lengthout,signout);
-input ctrlf;
+input ctrlf; //flush 
 input reg[4:0] aluop; // alu control
 input reg alusrc,memtoreg,regwrite,memread,memwrite, sign;//sign for loads if we r signextending, sign=0 for unsigned operations
 input reg [2:0] branch; // for branch type

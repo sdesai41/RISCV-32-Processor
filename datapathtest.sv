@@ -3,7 +3,7 @@ module datapathtest(currin);
 //reg [7:0] im [0:4095];
 output [31:0] currin;
 reg clk;
-
+integer i;
 assign currin=0;
 
 datapath dp(clk);

@@ -44,7 +44,7 @@ end
 
 assign cacheevict = ~cachehitout;
 
-add4 pcadd4out(PCout,PC4out);
+add4 pcadd4out(PCout,PC4out); 
 add4 pcadd4(PCim,PC4);
 
 instructionmemory IM(PCim,instruction);
