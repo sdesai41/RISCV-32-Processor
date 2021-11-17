@@ -1,22 +1,23 @@
 module branchpred(clk,outcome, branch, PCpred,PCupdate,out);
+parameter PCSIZE=16;
 
 input clk;
 input [2:0] branch;
-input [11:0] PCpred,PCupdate;
+input [PCSIZE-1:0] PCpred,PCupdate;
 input outcome;
-reg [1:0] state [0:4095];
+reg [1:0] state [0:65535];
 output reg out;
 integer i;
 
 initial begin 
-for (i=0; i<4096; i=i+4) begin
+for (i=0; i<65536; i=i+4) begin
 state[i]=2'b01;
 end
 end
 
 always @(posedge clk) begin
 	#5
-	$display("state @ %h=%b",PCpred,state[PCpred]);
+	//$display("state @ %h=%b",PCpred,state[PCpred]);
 	case(state[PCpred]) //output branch prediction 0 no 1 yes
 	2'b00: out=0;
 	2'b01: out=0;
@@ -44,7 +45,7 @@ endmodule
 
 module btb(clk,PC,PCupdate,branch,target,addrout);
 
-parameter PCSIZE=12;
+parameter PCSIZE=16;
 parameter BTBSIZE=32;
 
 input clk;

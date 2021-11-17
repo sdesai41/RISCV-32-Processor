@@ -17,10 +17,11 @@ assign out= sel ? in1: in2;
 endmodule 
 
 module mux11(in1,in2,in3,in4,out,sel,flushpos,flushneg); //11 bit input mux
+parameter PCSIZE=16;
 
-input [11:0] in1,in2,in3,in4;
+input [PCSIZE-1:0] in1,in2,in3,in4;
 input sel,flushpos,flushneg;
-output reg [11:0] out;
+output reg [PCSIZE-1:0] out;
 
 
 //assign out= sel ? in1: in2;

@@ -36,8 +36,14 @@ input [4:0] rs1,rs2,rd;
 input reg signed [31:0] wdata;
 input write;
 output reg signed [31:0] data1,data2;
-
+integer i;
 reg signed [31:0] rf [0:31];
+
+initial begin
+for (i=0; i<32; i=i+1) begin
+rf[i]=0;
+end
+end
 
 always @(*) begin
 

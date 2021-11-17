@@ -77,9 +77,57 @@ endmodule
 
 
 module pcadder(PC,imm,pcresult);
-input reg [11:0] PC;
+parameter PCSIZE=16;
+
+input reg [PCSIZE-1:0] PC;
 input reg signed [31:0] imm;
-output  [11:0] pcresult;
+output  [PCSIZE-1:0] pcresult;
 
 assign pcresult=PC+imm;
+endmodule
+
+
+module instrcounter(instr,ctrlf,PC);
+parameter instrsize=32;
+parameter PCSIZE=16;
+
+input reg [PCSIZE-1:0] PC;
+input reg [instrsize-1:0] instr;
+input ctrlf;
+
+reg [16:0] rcount,icount, bcount, loadcount, storecount,jtype, jrtype, auipc, lui;  
+
+initial begin
+rcount=0;
+icount=0; 
+bcount=0;
+loadcount=0;
+storecount=0;
+jtype=0;
+jrtype=0;
+auipc=0;
+lui=0;
+end
+always @(*) begin
+#10
+if (!ctrlf) begin
+ case(instr[6:0])
+			7'b0110011: rcount++;
+			7'b0010011: icount++;
+			7'b0100011: storecount++;
+			7'b0000011: loadcount++;
+			7'b1100011: bcount++;
+			7'b0110111: lui++;
+			7'b0010111: auipc++;
+			7'b1101111: jtype++;
+			7'b1100111: jrtype++;
+			default:begin
+			end
+			endcase
+$display("PC=%d", PC);
+$display("instruction=%h", instr);
+//$display("rcount=%d,icount=%d,bcount=%d,loadcount=%d,storecount=%d,jtype=%d,jrtype=%d ,auipc=%d,lui=%d", rcount,icount, bcount, loadcount, storecount,jtype, jrtype, auipc, lui); 
+			
+end			
+end
 endmodule

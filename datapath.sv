@@ -1,11 +1,15 @@
 
+
+
 module datapath(clk);
+parameter PCSIZE=16;
+
 
 input clk;
-reg [11:0] PCnew,PCout,PCout2,PCim,PC4;
-wire [11:0] PC4out;
-reg [11:0] addrout,PCresult,PCresultout;
-reg [31:0]instruction,instrout;
+reg [PCSIZE-1:0] PCnew,PCout,PCout2,PCim,PC4;
+wire [PCSIZE-1:0] PC4out;
+reg [PCSIZE-1:0] addrout,PCresult,PCresultout;
+reg [31:0]instruction,instrout,instro2;
 reg signed [31:0] imm,immout;
 reg [4:0] rs1,rs2,rd,rdout,rdo2,rdo3,rs1out,rs2out;
 reg [31:0] op2;
@@ -21,7 +25,7 @@ reg[4:0] aluop,aluopout,aluopu;
 reg alusrc,alusrcout,alusrcu,memtoreg,memtoregu,memtoregout,memtorego2, memtorego3, regwrite,regwriteu,regwriteout,regwriteo2,regwriteo3,memreadu,memread,memwrite,memwriteu,sign,signu,signout,signout2,memwriteout,memwriteout2,memreadout,memreadout2;//sign for loads if we r signextending
 reg [2:0] branch,branchout,branchout2,branchu;
 reg [1:0] length,lengthout,lengthout2,lengthu;
-reg ctrlf,pcwrite,fdwrite;
+reg ctrlf,pcwrite,fdwrite,ctrlfout;
 reg [1:0] forwardA,forwardB,forwardC,forwardD,forwardE;
 
 
@@ -45,6 +49,7 @@ end
 assign cacheevict = ~cachehitout;
 
 add4 pcadd4out(PCout,PC4out); 
+
 add4 pcadd4(PCim,PC4);
 
 instructionmemory IM(PCim,instruction);
@@ -59,7 +64,9 @@ controller control(instrout, aluop,alusrc, memtoreg, regwrite,branch, memread,me
 
 controllermux flushctrl(ctrlf, aluop,alusrc, memtoreg, regwrite,branch,memread,memwrite,length,sign,aluopu,alusrcu, memtoregu, regwriteu,branchu,memreadu,memwriteu,lengthu,signu);
 
-decodeex reg2(clk,rs1,rs1out,rs2,rs2out,PCout,imm,immout,data1,data2,rd,regwriteu,signu,memtoregu,memwriteu,memreadu,lengthu, alusrcu,branchu,aluopu,PCout2,data1out,data2out,rdout,regwriteout,signout,memtoregout,memreadout,lengthout, alusrcout,branchout,aluopout,memwriteout,branchdecide,brout);
+decodeex reg2(clk,rs1,rs1out,rs2,rs2out,PCout,imm,immout,data1,data2,rd,regwriteu,signu,memtoregu,memwriteu,memreadu,lengthu, alusrcu,branchu,aluopu,PCout2,data1out,data2out,rdout,regwriteout,signout,memtoregout,memreadout,lengthout, alusrcout,branchout,aluopout,memwriteout,branchdecide,brout,instrout,instro2,ctrlf,ctrlfout);
+
+instrcounter count(instro2,ctrlfout,PCout2);
 
 mux32 aluselect(immout,data2out,op2,alusrcout);
 

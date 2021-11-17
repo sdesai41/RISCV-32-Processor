@@ -1,8 +1,8 @@
 module dpbranch(out);
+parameter PCSIZE=16;
+output reg [PCSIZE-1:0] out;
 
-output reg [11:0] out;
-
-reg [11:0] PC;
+reg [PCSIZE-1:0] PC;
 
 add4 test(PC,out);
 initial begin

@@ -7,6 +7,7 @@ output reg [2:0] branch; // for branch type
 output reg [1:0] length; // for loads and stores
 
 
+
 always @ (instruction) begin
 	case(instruction[6:0])
 		7'b0110011: begin //rtype

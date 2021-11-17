@@ -132,7 +132,7 @@ else begin
 forwardD=2'b00;
 end
 if (rs2!=0) begin
- // same setup as forward D
+ // same setup as forward D 
 if ((rs2==rdexmem) && (rwriteexmem))  begin
 forwardE=2'b01;
 end
