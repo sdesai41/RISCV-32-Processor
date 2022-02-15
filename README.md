@@ -32,13 +32,21 @@ datapathtest is the top level module where the clock is set and an instatiation 
 within dp the entire datapath is instaniated. The structure of the files can be broken down through the following
 
 Fetchstage.sv contains instructionmemory,add4 modules 
+
 Decodestage.sv contains-decoder, registerfile, comparator modules 
+
 executestage.sv contains ALU, PCadder modules
+
 memorystage.sv contains datamemory,cache modules
+
 controller.sv contains controller module
+
 branchpred.sv contains branchpred, btb modules
+
 fowardingunit.sv contains fowardingunit, hazard_detection, decodeforward modules
+
 registers.sv contains all registers in between stages necessary for pipiline (ie. fetchdecode,decodeex,exmem,memwb) and PCreg
+
 multiplexers.sv contains mux11, threemux32, mux32,controllermux
 
 Inspect datapath.sv file for further understanding of connections between modules and refer to this to find locations of modules
