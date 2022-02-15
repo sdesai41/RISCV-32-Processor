@@ -8,7 +8,7 @@ Download all the system verilog files and compile them in your choice of simulat
 
 Download the c files ( and open/compile these files in your choice of IDE, compile them to create two different executables. 
 
-**Running Test program on processor**
+**Running Test Program on Processor**
 
 Choose a C/++ Program of your choice and run the code through: https://godbolt.org/ with the "RISC-V 32gc 12.01 clang" compiler to generate assembly language for your code
 
